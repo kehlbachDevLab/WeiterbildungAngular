@@ -1,0 +1,12 @@
+Beschreibe die grundlegenden Bestandteile einer Angular-Komponente und benenne, welche Dateien 
+typischerweise für eine Komponente erstellt werden. 
+Erkläre außerdem, welche Rolle der @Component-Decorator spielt und welche Eigenschaften er konfigurieren kann.  
+
+@Component-Decorator - markiert eine Klasse als Angular-Komponente und konfiguriert ihr Verhalten
+Durch diesen Decorator teilst du Angular mit, wie die Komponente heißen soll
+(Selector), wie sie aussehen soll (Template) und wie sie gestylt werden soll
+(Styles).
+
+Man kann Template und Style in eigene Dateien auslagern und darauf Zugriff nehmen nach dieser Art :
+Url: './todo-element.component.html',
+ styleUrl: './todo-element.component.css'
