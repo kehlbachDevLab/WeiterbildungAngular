@@ -1,15 +1,27 @@
+
 import { Component, Input, computed, signal } from '@angular/core';
-import type { Produkt } from './verkaufs-zahlen.component';
+import { CurrencyPipe } from '@angular/common';
+import type { Verkauf } from './verkaufs-zahlen.component';
+
+interface TopRow {
+  name: string;
+  anzahl: number;
+  umsatz: number;
+}
 
 @Component({
   selector: 'app-top-produkte',
   standalone: true,
+  imports: [CurrencyPipe],  
   template: `
     <section class="top-products">
-      <h2>Meistverkaufte Produkte</h2>
+      <h2>Top 3 Produkte</h2>
       <ol>
-        @for (p of top3(); track p.id) {
-          <li>{{ p.name }} : {{ p.verkaufteStueckzahl }} Stück</li>
+        @for (row of top3(); track row.name) {
+          <li>
+            {{ row.name }} • {{ row.anzahl }} Stück •
+            {{ row.umsatz | currency:'EUR':'symbol':'1.0-0' }}
+          </li>
         }
       </ol>
     </section>
@@ -21,11 +33,21 @@ import type { Produkt } from './verkaufs-zahlen.component';
   `]
 })
 export class TopProdukteComponent {
+  private _verkaeufe = signal<Verkauf[]>([]);
+  @Input() set verkaeufe(v: Verkauf[]) { this._verkaeufe.set(v ?? []); }
 
-  private _items = signal<Produkt[]>([]);
-  @Input() set produkte(v: Produkt[]) { this._items.set(v ?? []); }
-
-  top3 = computed(() =>
-    [...this._items()].sort((a, b) => b.verkaufteStueckzahl - a.verkaufteStueckzahl).slice(0, 3)
-  );
+  top3 = computed(() => {
+    const map = new Map<string, TopRow>();
+    for (const v of this._verkaeufe()) {
+      if (!map.has(v.name)) {
+        map.set(v.name, { name: v.name, anzahl: 0, umsatz: 0 });
+      }
+      const row = map.get(v.name)!;
+      row.anzahl += 1;
+      row.umsatz += v.preis;
+    }
+    return Array.from(map.values())
+      .sort((a, b) => b.anzahl - a.anzahl)
+      .slice(0, 3);
+  });
 }

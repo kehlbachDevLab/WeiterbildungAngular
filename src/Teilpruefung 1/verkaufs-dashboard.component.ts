@@ -1,5 +1,6 @@
+// src/app/verkaufs-dashboard.component.ts
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
-import { VerkaufsZahlenComponent, Produkt } from './verkaufs-zahlen.component';
+import { VerkaufsZahlenComponent, Verkauf } from './verkaufs-zahlen.component';
 import { TopProdukteComponent } from './top-produkte.component';
 
 @Component({
@@ -11,10 +12,11 @@ import { TopProdukteComponent } from './top-produkte.component';
       <h1>Verkaufsdashboard</h1>
 
       <div class="grid">
+        <!-- таблица с фильтром -->
         <app-verkaufs-zahlen #zahlen></app-verkaufs-zahlen>
 
-        <!-- передаем данные из verkaufs-zahlen в top-produkte -->
-        <app-top-produkte [produkte]="produkteAusZahlen"></app-top-produkte>
+        <!-- топ-3 продуктов по уже отфильтрованным продажам -->
+        <app-top-produkte [verkaeufe]="gefilterteVerkaeufe"></app-top-produkte>
       </div>
     </div>
   `,
@@ -31,11 +33,9 @@ import { TopProdukteComponent } from './top-produkte.component';
 export class VerkaufsDashboard implements AfterViewInit {
   @ViewChild('zahlen', { static: false }) zahlenCmp?: VerkaufsZahlenComponent;
 
-  produkteAusZahlen: Produkt[] = [];
+  gefilterteVerkaeufe: Verkauf[] = [];
 
   ngAfterViewInit() {
-    // читаем данные прямо из verkaufs-zahlen.component
-    this.produkteAusZahlen = this.zahlenCmp?.produkte ?? [];
-    // если обновишь массив в дочке динамически, лучше добавить Output или сигнал
+    this.gefilterteVerkaeufe = this.zahlenCmp?.gefilterteVerkaeufe ?? [];
   }
 }
