@@ -1,0 +1,36 @@
+<div class="container">
+  <h1>Todo Signals</h1>
+
+  <form class="add" (submit)="$event.preventDefault(); add()">
+    <input
+      placeholder="Neues Todo eingeben"
+      [value]="newText()"
+      (input)="newText.set($event.target.value)"
+      autofocus
+    />
+    <button type="submit">Hinzufügen</button>
+  </form>
+
+  <div class="filters">
+    <button [class.active]="activeFilter() === Filter.All" (click)="activeFilter.set(Filter.All)">Alle</button>
+    <button [class.active]="activeFilter() === Filter.Active" (click)="activeFilter.set(Filter.Active)">Aktiv</button>
+    <button [class.active]="activeFilter() === Filter.Completed" (click)="activeFilter.set(Filter.Completed)">Erledigt</button>
+  </div>
+
+  <ul class="list">
+    <li *ngFor="let t of filteredTodos(); trackBy: trackById">
+      <label>
+        <input type="checkbox" [checked]="t.done" (change)="toggle(t.id)" />
+        <span [class.done]="t.done">{{ t.text }}</span>
+      </label>
+      <button class="remove" (click)="remove(t.id)" aria-label="Entfernen">×</button>
+    </li>
+  </ul>
+
+  <div class="footer" *ngIf="stats().total > 0">
+    <span>{{ stats().remaining }} offen von {{ stats().total }}</span>
+    <button class="clear" (click)="clearCompleted()" *ngIf="stats().completed > 0">
+      Erledigte löschen
+    </button>
+  </div>
+</div>
